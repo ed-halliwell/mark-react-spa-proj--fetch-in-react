@@ -1,21 +1,17 @@
 import { useState } from "react";
 
-interface Joke {
-  id: number;
-  type: string;
-  setup: string;
-  punchline: string;
+interface Dog {
+  message: string;
+  status: string;
 }
 
 function App() {
-  const [joke, setJoke] = useState<Joke>();
+  const [dogs, setDogs] = useState<Dog[]>([]);
 
-  const handleGetJoke = async () => {
-    const response = await fetch(
-      "https://official-joke-api.appspot.com/jokes/general/random"
-    );
-    const jsonBody: Joke[] = await response.json();
-    setJoke(jsonBody[0]);
+  const handleGetDog = async () => {
+    const response = await fetch("https://dog.ceo/api/breeds/image/random");
+    const dog: Dog = await response.json();
+    setDogs([...dogs, dog]);
   };
 
   // const handleGetJoke = () => {
@@ -24,27 +20,30 @@ function App() {
   //     .then((jsonBody: Joke[]) => setJoke(jsonBody[0]));
   // };
 
-  if (joke) {
+  const styles = {
+    width: "200px",
+  };
+
+  if (dogs.length >= 1) {
     return (
       <div>
-        <h1>Joke app</h1>
-        <details>
-          <summary>{joke.setup}</summary>
-          <p>{joke.punchline}</p>
-        </details>
+        <h1>Dog app</h1>
+        <button onClick={handleGetDog}>Get another dog</button>
         <hr />
-        <button onClick={handleGetJoke}>Get another joke</button>
+        {dogs.map((dog) => (
+          <img key={dog.message} src={dog.message} alt="dog" style={styles} />
+        ))}
       </div>
     );
   } else {
     return (
       <div>
-        <h1>Joke app</h1>
+        <h1>Dog app</h1>
         <p>
           Click the button to trigger a <code>fetch</code> that gets a random
-          joke from an API!
+          dog from an API!
         </p>
-        <button onClick={handleGetJoke}>Get joke</button>
+        <button onClick={handleGetDog}>Get dog</button>
       </div>
     );
   }
